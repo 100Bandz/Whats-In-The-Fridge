@@ -1,0 +1,16 @@
+# Node (for backend)
+backend/node_modules/
+backend/.env
+backend/logs
+backend/*.log
+
+# Vue / frontend
+frontend/.vscode
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# OS / IDE
+.DS_Store
+*.swp
+.idea/
