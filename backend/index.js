@@ -1,8 +1,15 @@
-const express = require('express');
-const cors = require('cors');
-const { OpenAI } = require('openai');
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { OpenAI } from 'openai';
+import db from './db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
 app.use(cors());
@@ -19,7 +26,7 @@ app.post('/api/recipes/generate', async (req, res) => {
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-5-nano',
       messages: [
         {
           role: 'system',
@@ -39,7 +46,14 @@ app.post('/api/recipes/generate', async (req, res) => {
       ],
     });
 
-    const recipes = JSON.parse(response.choices[0].message.content);
+    let recipes;
+    try {
+      recipes = JSON.parse(response.choices[0].message.content);
+    } catch (parseErr) {
+      console.error('Failed to parse OpenAI response:', parseErr);
+      return res.status(500).json({ error: 'OpenAI returned invalid JSON.' });
+    }
+
     res.json({ recipes });
   } catch (error) {
     console.error('OpenAI API error:', error);
@@ -47,11 +61,9 @@ app.post('/api/recipes/generate', async (req, res) => {
   }
 });
 
-
 app.get('/', (req, res) => {
   res.send('Recipe Generator Backend is running.');
-}
-);
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
