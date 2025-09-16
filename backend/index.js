@@ -5,6 +5,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { OpenAI } from 'openai';
 import db from './db.js';
+import authRoutes from './auth.js';
+import pantryRoutes from './pantry.js';
+import { requireAuth } from './middleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,7 +20,12 @@ app.use(express.json());
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-app.post('/api/recipes/generate', async (req, res) => {
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/pantry', pantryRoutes);
+
+// Recipe generator (protected)
+app.post('/api/recipes/generate', requireAuth, async (req, res) => {
   const { ingredients } = req.body;
 
   if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) {
