@@ -39,12 +39,14 @@ router.post("/login", async (req, res) => {
     const same = await bcrypt.compare(password, user.password_hash);
     if (!same) return res.status(401).json({ error: "Invalid email or password" });
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
-    res.json({ token });
+    // Include isAdmin in the token
+    const token = jwt.sign({ id: user.id, email: user.email, isAdmin: !!user.isAdmin }, JWT_SECRET, { expiresIn: "7d" });
+    res.json({ token, user: { id: user.id, email: user.email, isAdmin: !!user.isAdmin } });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Login failed" });
   }
 });
+
 
 export default router;
