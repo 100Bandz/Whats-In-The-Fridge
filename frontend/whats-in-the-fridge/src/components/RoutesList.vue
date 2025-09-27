@@ -15,7 +15,7 @@ const routes = ref<{ method: string; path: string }[]>([])
 
 onMounted(async () => {
   try {
-    const data = await apiFetch('/api/admin/routes', { method: 'GET' })
+    const data = await apiFetch<{ routes: { method: string; path: string }[] }>('/api/admin/routes', { method: 'GET' })
     routes.value = data.routes
   } catch (err) {
     console.error('Failed to fetch routes', err)
