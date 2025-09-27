@@ -42,4 +42,59 @@ router.get("/routes", requireAuth, requireAdmin, (req, res) => {
   res.json({ routes });
 });
 
+
+// Make user admin
+router.post('/make-admin/:id', requireAuth, requireAdmin, (req, res) => {
+  if (!req.user.isAdmin) {
+    return res.status(403).json({ error: 'Forbidden' })
+  }
+
+  const { id } = req.params
+  try {
+    const stmt = db.prepare('UPDATE users SET isAdmin = 1 WHERE id = ?')
+    const result = stmt.run(id)
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Make admin error:', err)
+    res.status(500).json({ error: 'Failed to promote user' })
+  }
+})
+
+// Demote admin -> regular user
+router.post('/demote-admin/:id', requireAuth, requireAdmin, (req, res) => {
+  const { id } = req.params
+  try {
+    const stmt = db.prepare('UPDATE users SET isAdmin = 0 WHERE id = ?')
+    const result = stmt.run(id)
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Demote admin error:', err)
+    res.status(500).json({ error: 'Failed to demote user' })
+  }
+})
+
+// Delete a user
+router.delete('/users/:id', requireAuth, requireAdmin, (req, res) => {
+  const { id } = req.params
+  try {
+    const stmt = db.prepare('DELETE FROM users WHERE id = ?')
+    const result = stmt.run(id)
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Delete user error:', err)
+    res.status(500).json({ error: 'Failed to delete user' })
+  }
+})
+
+
+
 export default router;

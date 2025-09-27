@@ -34,7 +34,7 @@
     <footer class="bg-white shadow-inner p-4 text-center mt-auto text-gray-600">
       Created by
       <a
-        href="https://github.com/100Bandz"
+        href="https://nicolasbenavides.ca/"
         target="_blank"
         rel="noopener noreferrer"
         class="text-blue-600 hover:text-blue-800 underline ml-1"

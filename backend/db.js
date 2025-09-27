@@ -34,11 +34,11 @@ db.prepare(`
     name TEXT NOT NULL,
     steps TEXT NOT NULL, -- store steps as JSON
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   )
 `).run();
 
-// Logs table for admin dashboard
+// Logs table
 db.prepare(`
   CREATE TABLE IF NOT EXISTS api_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,9 +50,10 @@ db.prepare(`
     ai_response TEXT,
     error TEXT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   )
 `).run();
+
 
 
 

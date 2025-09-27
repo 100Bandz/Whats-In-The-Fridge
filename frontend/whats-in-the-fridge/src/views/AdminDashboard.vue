@@ -7,6 +7,7 @@
       <button @click="activeTab = 'logs'" :class="tabClass('logs')">API Logs</button>
       <button @click="activeTab = 'health'" :class="tabClass('health')">Health</button>
       <button @click="activeTab = 'routes'" :class="tabClass('routes')">Routes</button>
+      <button @click="activeTab = 'users'" :class="tabClass('users')">Users</button>
     </div>
 
     <!-- Tab Contents -->
@@ -21,6 +22,10 @@
     <div v-if="activeTab === 'routes'">
       <RoutesList />
     </div>
+
+    <div v-if="activeTab === 'users'">
+      <UsersTable :activeTab="activeTab" />
+    </div>
   </div>
 </template>
 
@@ -29,6 +34,7 @@ import { ref } from 'vue'
 import LogsTable from '../components/LogsTable.vue'
 import HealthPanel from '../components/HealthPanel.vue'
 import RoutesList from '../components/RoutesList.vue'
+import UsersTable from '../components/UsersTable.vue'
 
 const activeTab = ref('logs')
 
