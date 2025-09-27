@@ -1,80 +1,54 @@
 <template>
-  <div class="max-w-md mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-4">Auth</h1>
+  <div class="max-w-md mx-auto bg-white shadow p-6 rounded">
+    <h1 class="text-xl font-bold mb-4">{{ isLogin ? 'Login' : 'Signup' }}</h1>
 
-    <form @submit.prevent="handleSignup" class="space-y-3 mb-6">
-      <h2 class="font-semibold">Sign Up</h2>
+    <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
+      <input v-model="email" type="email" placeholder="Email" class="border p-2 rounded" required />
       <input
-        v-model="signupEmail"
-        type="email"
-        placeholder="Email"
-        class="w-full border p-2 rounded"
-      />
-      <input
-        v-model="signupPassword"
+        v-model="password"
         type="password"
         placeholder="Password"
-        class="w-full border p-2 rounded"
+        class="border p-2 rounded"
+        required
       />
-      <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Sign Up</button>
-    </form>
 
-    <form @submit.prevent="handleLogin" class="space-y-3">
-      <h2 class="font-semibold">Login</h2>
-      <input
-        v-model="loginEmail"
-        type="email"
-        placeholder="Email"
-        class="w-full border p-2 rounded"
-      />
-      <input
-        v-model="loginPassword"
-        type="password"
-        placeholder="Password"
-        class="w-full border p-2 rounded"
-      />
-      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Login</button>
-    </form>
-
-    <div v-if="auth.token" class="mt-6">
-      <p class="mb-2">✅ Logged in with token:</p>
-      <pre class="bg-gray-100 p-2 text-xs break-all">{{ auth.token }}</pre>
-      <button @click="auth.logout" class="mt-2 bg-red-500 text-white px-3 py-1 rounded">
-        Logout
+      <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+        {{ isLogin ? 'Login' : 'Signup' }}
       </button>
-    </div>
+    </form>
+
+    <p class="mt-4 text-sm">
+      {{ isLogin ? "Don't have an account?" : 'Already have an account?' }}
+      <button @click="isLogin = !isLogin" class="text-blue-600 hover:underline">
+        {{ isLogin ? 'Signup' : 'Login' }}
+      </button>
+    </p>
+
+    <p v-if="error" class="text-red-600 mt-2">{{ error }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAuth } from '../composables/useAuth'
+import { useAuth } from '@/composables/useAuth'
 
-const auth = useAuth()
+const { login, signup } = useAuth()
 
-// Signup state
-const signupEmail = ref('')
-const signupPassword = ref('')
+const email = ref('')
+const password = ref('')
+const isLogin = ref(true)
+const error = ref('')
 
-// Login state
-const loginEmail = ref('')
-const loginPassword = ref('')
-
-async function handleSignup() {
+async function handleSubmit() {
+  error.value = ''
   try {
-    await auth.signup(signupEmail.value, signupPassword.value)
-    alert('Signup successful!')
-  } catch (err: any) {
-    alert(err.message)
-  }
-}
-
-async function handleLogin() {
-  try {
-    await auth.login(loginEmail.value, loginPassword.value)
-    alert('Login successful!')
-  } catch (err: any) {
-    alert(err.message)
+    if (isLogin.value) {
+      await login(email.value, password.value)
+    } else {
+      await signup(email.value, password.value)
+    }
+  } catch (e: any) {
+    error.value = e.message || 'Something went wrong'
   }
 }
 </script>

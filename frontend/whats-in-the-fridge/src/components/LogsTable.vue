@@ -147,8 +147,7 @@ async function copyJSON() {
     let text = modalContent.value
     try {
       text = JSON.stringify(JSON.parse(text), null, 2)
-    } catch {
-    }
+    } catch {}
     await navigator.clipboard.writeText(text)
     alert('JSON copied to clipboard!')
   } catch (err) {

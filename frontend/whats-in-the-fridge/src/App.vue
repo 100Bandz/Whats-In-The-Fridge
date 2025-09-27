@@ -162,6 +162,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { apiFetch } from '@/utils/api'
+import { useAuth } from '@/composables/useAuth'
+
+const { pantry, recipes, user } = useAuth() // Shared state
+
+const ingredientsInput = ref('')
+const loading = ref(false)
+const allowExtras = ref(false)
+const cuisine = ref('')
+const language = ref('English')
+const mealType = ref('')
+const dietType = ref('')
+const difficulty = ref('')
 
 interface Recipe {
   id?: number
@@ -175,21 +187,6 @@ interface Recipe {
   ingredients?: string[]
   createdAt?: string
 }
-
-const ingredientsInput = ref<string>('')
-const pantry = ref<string[]>([])
-const recipes = ref<Recipe[]>([])
-const loading = ref(false)
-const allowExtras = ref<boolean>(false)
-
-// free text
-const cuisine = ref<string>('')
-const language = ref<string>('English')
-
-// dropdowns
-const mealType = ref<string>('')
-const dietType = ref<string>('')
-const difficulty = ref<string>('')
 
 onMounted(async () => {
   try {
