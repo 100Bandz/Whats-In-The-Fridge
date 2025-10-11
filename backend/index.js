@@ -12,6 +12,8 @@ import { callRecipeModel } from "./recipeHelper.js";
 import adminRoutes from "./admin.js";
 import cookieParser from "cookie-parser";
 
+dotenv.config();
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -21,10 +23,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/pantry", pantryRoutes);
 app.use("/api/recipes", recipeRoutes);
-
-// Admin dashboard routes
 app.use("/api/admin", adminRoutes);
-
 
 // Recipe generator
 app.post("/api/recipes/generate", requireAuth, async (req, res) => {
@@ -82,11 +81,21 @@ app.post("/api/recipes/suggest", requireAuth, async (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("Recipe Generator Backend is running.");
-});
+if (process.env.NODE_ENV === "production") {
+  const vueDistPath = path.join(__dirname, "dist");
+  app.use(express.static(vueDistPath));
+
+  app.use((req, res) => {
+    res.sendFile(path.join(vueDistPath, "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("Backend running in development mode.");
+  });
+}
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
+  console.log(`Backend + Frontend running on http://localhost:${PORT}`);
 });
