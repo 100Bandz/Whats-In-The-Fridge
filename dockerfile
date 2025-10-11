@@ -3,15 +3,14 @@
 # ================================
 FROM node:20 AS frontend-builder
 
-# Set working directory
 WORKDIR /app/frontend
 
 # Copy frontend files
-COPY ../frontend/whats-in-the-fridge/package*.json ./
+COPY frontend/whats-in-the-fridge/package*.json ./
 RUN npm install
 
 # Copy the rest of the frontend source code
-COPY ../frontend/whats-in-the-fridge ./
+COPY frontend/whats-in-the-fridge ./
 
 # Build the Vue app
 RUN npm run build
@@ -25,11 +24,11 @@ FROM node:20 AS backend
 WORKDIR /app
 
 # Copy backend dependencies
-COPY package*.json ./
+COPY backend/package*.json ./
 RUN npm install --production
 
 # Copy backend source code
-COPY . .
+COPY backend .
 
 # Copy Vue build output into backend's dist folder
 COPY --from=frontend-builder /app/frontend/dist ./dist
