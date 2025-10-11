@@ -11,8 +11,12 @@ import { requireAuth } from "./middleware.js";
 import { callRecipeModel } from "./recipeHelper.js";
 import adminRoutes from "./admin.js";
 import cookieParser from "cookie-parser";
+import { dirname } from "path";
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 app.use(cors());
