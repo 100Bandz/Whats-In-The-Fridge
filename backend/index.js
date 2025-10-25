@@ -27,8 +27,8 @@ app.use(cookieParser());
 
 // Rate limiters
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per 15 minutes
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 5, // 5 attempts per 5 minutes
   message: { error: "Too many authentication attempts, please try again later." },
   standardHeaders: true,
   legacyHeaders: false,
@@ -52,7 +52,7 @@ const apiLimiter = rateLimit({
 // Stricter limiter for AI recipe generation (more expensive operations)
 const recipeGenerationLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 5, // 5 recipe generations per minute per user
+  max: 3, // 3 recipe generations per minute per user
   message: { error: "Too many recipe generation requests, please wait a moment." },
   standardHeaders: true,
   legacyHeaders: false,
