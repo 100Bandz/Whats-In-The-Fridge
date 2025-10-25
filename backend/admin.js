@@ -95,6 +95,19 @@ router.delete('/users/:id', requireAuth, requireAdmin, (req, res) => {
   }
 })
 
+// List all users
+router.get('/users', requireAuth, requireAdmin, (req, res) => {
+  if (!req.user.isAdmin) return res.status(403).json({ error: 'Forbidden' })
+  try {
+    const users = db.prepare('SELECT id, email, isAdmin FROM users').all()
+    res.json(users)
+  } catch (err) {
+    console.error('Fetch users error:', err)
+    res.status(500).json({ error: 'Failed to fetch users' })
+  }
+})
+
+
 
 
 export default router;
