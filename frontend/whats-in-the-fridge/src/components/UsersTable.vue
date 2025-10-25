@@ -63,7 +63,7 @@ const users = ref<User[]>([])
 
 async function fetchUsers() {
   try {
-    users.value = await apiFetch<User[]>('/api/auth/users', { method: 'GET' })
+    users.value = await apiFetch<User[]>('/api/admin/users', { method: 'GET' })
   } catch (err) {
     console.error('Failed to fetch users', err)
   }

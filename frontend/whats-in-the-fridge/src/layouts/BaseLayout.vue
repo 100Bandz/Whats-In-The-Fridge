@@ -1,11 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
     <!-- Navbar -->
-    <nav class="bg-white shadow p-4 relative flex items-center justify-between">
-      <div>
-        <h1 class="font-bold text-xl">🥕 FridgeApp</h1>
-      </div>
-
+    <nav class="bg-white shadow p-4 relative flex items-center justify-end">
       <div class="absolute left-1/2 transform -translate-x-1/2 flex gap-6">
         <router-link to="/" class="text-blue-600 hover:underline">Home</router-link>
         <router-link to="/saved" class="text-yellow-600 hover:underline">Saved Recipes</router-link>
@@ -24,6 +20,9 @@
         </template>
       </div>
     </nav>
+
+    <!-- Toast popup -->
+    <Toast ref="toastRef" />
 
     <!-- Main content -->
     <main class="p-6 flex-1">
@@ -47,6 +46,12 @@
 
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
+import { ref, provide } from 'vue'
+import Toast from '@/components/Toast.vue'
 
 const { user, logout } = useAuth()
+
+const toastRef = ref<InstanceType<typeof Toast> | null>(null)
+
+provide('toast', toastRef)
 </script>

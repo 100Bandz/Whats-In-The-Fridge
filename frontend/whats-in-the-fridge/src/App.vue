@@ -2,8 +2,9 @@
   <div class="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
     <div class="w-full max-w-3xl">
       <!-- Title -->
-      <header class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold">🥕 What's In The Fridge?</h1>
+      <header class="flex justify-center items-center gap-3 mb-6">
+        <img src="/gradient.svg" class="h-8 w-auto" alt="Gradient logo" />
+        <h1 class="font-bold text-2xl">What's In The Fridge?</h1>
       </header>
 
       <!-- Pantry Input -->
@@ -112,7 +113,7 @@
           class="px-6 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition disabled:opacity-50 flex items-center gap-2"
         >
           <span v-if="loading" class="animate-spin">⏳</span>
-          {{ loading ? 'Finding Recipes...' : 'Suggest Recipes' }}
+          {{ loading ? "Finding Recipes..." : "Suggest Recipes" }}
         </button>
       </div>
 
@@ -133,7 +134,9 @@
             >
               <span v-if="recipe.cuisine">Cuisine: {{ recipe.cuisine }}</span>
               <span v-if="recipe.dietType" class="ml-3">Diet: {{ recipe.dietType }}</span>
-              <span v-if="recipe.difficulty" class="ml-3">Difficulty: {{ recipe.difficulty }}</span>
+              <span v-if="recipe.difficulty" class="ml-3"
+                >Difficulty: {{ recipe.difficulty }}</span
+              >
             </div>
 
             <ul class="list-disc pl-5 space-y-1 text-gray-700">
@@ -146,127 +149,155 @@
             @click="saveRecipe(recipe)"
             class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600 transition"
           >
-            ⭐ Save Recipe
+            Save Recipe
           </button>
         </div>
       </div>
 
       <!-- Empty state -->
       <div v-else-if="!loading" class="text-center text-gray-500 mt-6">
-        No recipes yet. Add ingredients and click <strong>Suggest Recipes</strong> 🍳
+        No recipes yet. Add ingredients and click <strong>Suggest Recipes</strong>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { apiFetch } from '@/utils/api'
-import { useAuth } from '@/composables/useAuth'
+import { ref, onMounted, inject } from "vue";
+import { apiFetch } from "@/utils/api";
+import { useAuth } from "@/composables/useAuth";
 
-const { pantry, recipes, user } = useAuth() // Shared state
+const { pantry, recipes, user } = useAuth(); // Shared state
 
-const ingredientsInput = ref('')
-const loading = ref(false)
-const allowExtras = ref(false)
-const cuisine = ref('')
-const language = ref('English')
-const mealType = ref('')
-const dietType = ref('')
-const difficulty = ref('')
+const toast = inject('toast') as any
+
+const ingredientsInput = ref("");
+const loading = ref(false);
+const allowExtras = ref(false);
+const cuisine = ref("");
+const language = ref("English");
+const mealType = ref("");
+const dietType = ref("");
+const difficulty = ref("");
 
 interface Recipe {
-  id?: number
-  name: string
-  steps: string[]
-  cuisine?: string
-  dietType?: string
-  mealType?: string
-  difficulty?: string
-  prepTime?: string
-  ingredients?: string[]
-  createdAt?: string
+  id?: number;
+  name: string;
+  steps: string[];
+  cuisine?: string;
+  dietType?: string;
+  mealType?: string;
+  difficulty?: string;
+  prepTime?: string;
+  ingredients?: string[];
+  createdAt?: string;
 }
 
 onMounted(async () => {
   try {
-    const data = await apiFetch<{ ingredients: string[] }>('/api/pantry', { method: 'GET' })
-    pantry.value = data.ingredients || []
+    if (!user.value) return
+    const data = await apiFetch<{ ingredients: string[] }>("/api/pantry", {
+      method: "GET",
+    });
+    pantry.value = data.ingredients || [];
   } catch (err) {
-    console.error('Failed to fetch pantry', err)
+    console.error("Failed to fetch pantry", err);
   }
-})
+});
 
 const addIngredients = async () => {
+  if (!user.value) {
+    toast?.value?.showToast("You must be logged in to add ingredients.", "error")
+    return
+  }
+
   const newIngredients = ingredientsInput.value
-    .split(',')
-    .map((i) => i.trim())
+    .split(",")
+    .map((i) => i.trim().toLowerCase())
     .filter((i) => i.length > 0)
 
   if (!newIngredients.length) return
-  ingredientsInput.value = ''
+
+  // Filter out ingredients already in pantry
+  const existingIngredients = pantry.value.map((i) => i.toLowerCase())
+  const uniqueNewIngredients = newIngredients.filter(
+    (i) => !existingIngredients.includes(i)
+  )
+
+  if (!uniqueNewIngredients.length) {
+    // Show toast for duplicate ingredients
+    toast?.value?.showToast("Cannot add duplicate ingredients", "error")
+    return
+  }
 
   try {
-    const data = await apiFetch<{ ingredients: string[] }>('/api/pantry', {
-      method: 'POST',
-      body: JSON.stringify({ ingredients: newIngredients }),
+    const data = await apiFetch<{ ingredients: string[] }>("/api/pantry", {
+      method: "POST",
+      body: JSON.stringify({ ingredients: uniqueNewIngredients }),
     })
+
+    // Update pantry on success
     pantry.value = data.ingredients || pantry.value
+    toast?.value?.showToast("Ingredients added successfully!", "success")
+    // Clear input field
+    ingredientsInput.value = ""
   } catch (err) {
-    console.error('Failed to add ingredients', err)
+    console.error("Failed to add ingredients", err)
+    toast?.value?.showToast("Failed to add ingredients.", "error")
   }
 }
+
 
 const removeIngredient = async (ingredient: string) => {
   try {
     const data = await apiFetch<{ ingredients: string[] }>(
       `/api/pantry/${encodeURIComponent(ingredient)}`,
       {
-        method: 'DELETE',
-      },
-    )
-    pantry.value = data.ingredients || pantry.value
+        method: "DELETE",
+      }
+    );
+    pantry.value = data.ingredients || pantry.value;
   } catch (err) {
-    console.error('Failed to remove ingredient', err)
+    console.error("Failed to remove ingredient", err);
   }
-}
+};
 
 const getRecipes = async () => {
-  recipes.value = []
-  loading.value = true
+  recipes.value = [];
+  loading.value = true;
 
   try {
-    const endpoint = allowExtras.value ? '/api/recipes/suggest' : '/api/recipes/generate'
+    const endpoint = allowExtras.value ? "/api/recipes/suggest" : "/api/recipes/generate";
     const payload = {
       ingredients: pantry.value,
       cuisine: cuisine.value,
       mealType: mealType.value,
       dietType: dietType.value,
       difficulty: difficulty.value,
-      language: language.value || 'English',
-    }
+      language: language.value || "English",
+    };
     const data = await apiFetch<{ recipes: Recipe[] }>(endpoint, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(payload),
-    })
-    recipes.value = data.recipes || []
+    });
+    recipes.value = data.recipes || [];
   } catch (err) {
-    console.error('Failed to fetch recipes', err)
+    console.error("Failed to fetch recipes", err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const saveRecipe = async (recipe: Recipe) => {
   try {
-    await apiFetch('/api/recipes', {
-      method: 'POST',
+    await apiFetch("/api/recipes", {
+      method: "POST",
       body: JSON.stringify(recipe),
-    })
-    alert('Recipe saved! ⭐')
+    });
+    alert("Recipe saved");
   } catch (err) {
-    console.error('Failed to save recipe', err)
-    alert('Save failed. Check console.')
+    console.error("Failed to save recipe", err);
+    alert("Save failed. Check console.");
   }
-}
+};
 </script>

@@ -20,7 +20,7 @@
             @click="deleteRecipe(recipe.id)"
             class="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition"
           >
-            🗑 Delete
+            Delete
           </button>
         </div>
       </div>

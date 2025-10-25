@@ -17,12 +17,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const { user, fetchUser } = useAuth()
-
-  // Load user if not already loaded
-  if (user.value === null) {
-    await fetchUser().catch(() => {})
-  }
+  const { user } = useAuth()
 
   if (to.meta.requiresAuth && !user.value) {
     return next('/auth') // must be logged in

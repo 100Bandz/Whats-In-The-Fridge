@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+  <defs>
+    <!-- Gradient for peel -->
+    <linearGradient id="peelGradient" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A2D149"/>
+      <stop offset="100%" stop-color="#3A7D00"/>
+    </linearGradient>
+    <!-- Gradient for inner slice -->
+    <linearGradient id="sliceGradient" x1="6" y1="6" x2="18" y2="18" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#D0F5A9"/>
+      <stop offset="100%" stop-color="#7BC637"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Peel with gradient fill -->
+  <path d="M21.66 17.67a1.08 1.08 0 0 1-.04 1.6A12 12 0 0 1 4.73 2.38a1.1 1.1 0 0 1 1.61-.04z" fill="url(#peelGradient)" stroke="#3A7D00"/>
+  
+  <!-- Inner slice lines -->
+  <path d="M19.65 15.66A8 8 0 0 1 8.35 4.34" stroke="#3A7D00" fill="url(#sliceGradient)" />
+  <path d="M14 10l-5.5 5.5" stroke="#3A7D00" />
+  <path d="M14 17.85V10H6.15" stroke="#3A7D00" />
+</svg>
