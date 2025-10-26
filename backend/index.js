@@ -25,6 +25,8 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
+app.set('trust proxy', 1); 
+
 // Rate limiters
 const authLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
