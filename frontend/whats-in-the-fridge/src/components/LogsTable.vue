@@ -1,74 +1,61 @@
 <template>
-  <div>
-    <h2 class="text-xl font-semibold mb-4">API Logs</h2>
-    <table class="w-full table-auto border">
-      <thead>
-        <tr class="bg-gray-100">
-          <th class="border px-2 py-1">Timestamp</th>
-          <th class="border px-2 py-1">Endpoint</th>
-          <th class="border px-2 py-1">User</th>
-          <th class="border px-2 py-1">Payload</th>
-          <th class="border px-2 py-1">AI Messages</th>
-          <th class="border px-2 py-1">Response / Error</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="log in logs" :key="log.id">
-          <td class="border px-2 py-1">{{ log.createdAt }}</td>
-          <td class="border px-2 py-1">{{ log.endpoint }}</td>
-          <td class="border px-2 py-1">{{ log.user_id || 'N/A' }}</td>
-          <td class="border px-2 py-1">
-            <button class="text-blue-600 underline" @click="openModal(log.payload, 'Payload')">
-              View
-            </button>
-          </td>
-          <td class="border px-2 py-1">
-            <button class="text-blue-600 underline" @click="openModal(log.messages, 'AI Messages')">
-              View
-            </button>
-          </td>
-          <td class="border px-2 py-1">
-            <button
-              class="text-blue-600 underline"
-              @click="openModal(log.ai_response || log.error, 'Response / Error')"
-            >
-              View
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Modal -->
-    <div
-      v-if="modalContent"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      @click.self="closeModal"
-    >
-      <div class="bg-white p-4 rounded-lg w-3/4 h-3/4 overflow-auto relative">
-        <!-- Close button (top-right) -->
-        <button
-          class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
-          @click="closeModal"
-        >
-          ✕
-        </button>
-
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-lg font-bold">{{ modalTitle }}</h3>
-          <button
-            class="ml-2 bg-gray-200 hover:bg-gray-300 text-sm px-2 py-1 rounded"
-            @click="copyJSON"
-          >
-            📋 Copy JSON
-          </button>
-        </div>
-
-        <!-- JSON Viewer -->
-        <pre v-html="formatJSON(modalContent)" class="whitespace-pre-wrap font-mono text-sm"></pre>
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title mb-2">API Logs</h2>
+      <div class="overflow-x-auto">
+        <table class="table table-zebra text-sm">
+          <thead>
+            <tr class="bg-base-200">
+              <th>Time</th>
+              <th>Endpoint</th>
+              <th>User</th>
+              <th>Payload</th>
+              <th>Messages</th>
+              <th>Response/Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="log in logs" :key="log.id">
+              <td>{{ log.createdAt }}</td>
+              <td>{{ log.endpoint }}</td>
+              <td>{{ log.user_id || 'N/A' }}</td>
+              <td>
+                <button class="btn btn-link btn-xs" @click="openModal(log.payload, 'Payload')">
+                  View
+                </button>
+              </td>
+              <td>
+                <button class="btn btn-link btn-xs" @click="openModal(log.messages, 'AI Messages')">
+                  View
+                </button>
+              </td>
+              <td>
+                <button class="btn btn-link btn-xs"
+                  @click="openModal(log.ai_response || log.error, 'Response / Error')">
+                  View
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+
+    <!-- Modal -->
+    <dialog v-if="modalContent" class="modal modal-open">
+      <div class="modal-box w-11/12 max-w-4xl bg-base-100">
+        <h3 class="font-bold text-lg mb-2 flex items-center justify-between">
+          {{ modalTitle }}
+          <button class="btn btn-sm btn-ghost text-lg" @click="closeModal">✕</button>
+        </h3>
+        <pre v-html="formatJSON(modalContent)"
+          class="whitespace-pre-wrap font-mono text-sm bg-base-200 rounded p-3 overflow-auto h-96"></pre>
+        <div class="modal-action">
+          <button @click="copyJSON" class="btn btn-primary btn-sm">Copy</button>
+          <button @click="closeModal" class="btn btn-error btn-sm">Close</button>
+        </div>
+      </div>
+    </dialog>
   </div>
 </template>
 

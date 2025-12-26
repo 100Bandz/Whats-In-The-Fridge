@@ -1,30 +1,49 @@
 <template>
-  <div class="max-w-md mx-auto bg-white shadow p-6 rounded">
-    <h1 class="text-xl font-bold mb-4">{{ isLogin ? 'Login' : 'Signup' }}</h1>
+  <div class="min-h-[75vh] flex items-center justify-center p-6">
+    <div class="card bg-base-100 shadow-2xl w-full max-w-sm">
+      <div class="card-body space-y-6">
+        <h1 class="text-3xl font-bold mb-2 text-center">
+          {{ isLogin ? 'Login' : 'Signup' }}
+        </h1>
 
-    <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
-      <input v-model="email" type="email" placeholder="Email" class="border p-2 rounded" required />
-      <input
-        v-model="password"
-        type="password"
-        placeholder="Password"
-        class="border p-2 rounded"
-        required
-      />
+        <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
+          <div class="form-control">
+            <input
+              v-model="email"
+              type="email"
+              placeholder="Email"
+              class="input input-bordered w-full"
+              required
+            />
+          </div>
 
-      <button type="submit" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
-        {{ isLogin ? 'Login' : 'Signup' }}
-      </button>
-    </form>
+          <div class="form-control">
+            <input
+              v-model="password"
+              type="password"
+              placeholder="Password"
+              class="input input-bordered w-full"
+              required
+            />
+          </div>
 
-    <p class="mt-4 text-sm">
-      {{ isLogin ? "Don't have an account?" : 'Already have an account?' }}
-      <button @click="isLogin = !isLogin" class="text-blue-600 hover:underline">
-        {{ isLogin ? 'Signup' : 'Login' }}
-      </button>
-    </p>
+          <button type="submit" class="btn btn-primary w-full text-base font-semibold">
+            {{ isLogin ? 'Login' : 'Signup' }}
+          </button>
+        </form>
 
-    <p v-if="error" class="text-red-600 mt-2">{{ error }}</p>
+        <div class="divider my-0"></div>
+
+        <p class="text-sm text-center">
+          {{ isLogin ? "Don't have an account?" : 'Already registered?' }}
+          <button @click="isLogin = !isLogin" class="link link-primary font-medium">
+            {{ isLogin ? 'Signup' : 'Login' }}
+          </button>
+        </p>
+
+        <div v-if="error" class="alert alert-error mt-3"><span>{{ error }}</span></div>
+      </div>
+    </div>
   </div>
 </template>
 

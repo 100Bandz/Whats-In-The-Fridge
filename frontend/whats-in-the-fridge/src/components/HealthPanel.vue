@@ -1,7 +1,20 @@
 <template>
-  <div>
-    <h2 class="text-xl font-semibold mb-4">Health Status</h2>
-    <pre>{{ health }}</pre>
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title mb-3">System Health</h2>
+      <div v-if="health" class="overflow-x-auto">
+        <table class="table w-full text-sm">
+          <tbody>
+            <tr><th>Status</th><td><span class="badge badge-success">{{ health.status }}</span></td></tr>
+            <tr><th>Uptime (s)</th><td>{{ health.uptime.toFixed(2) }}</td></tr>
+            <tr><th>Timestamp</th><td>{{ health.timestamp }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-else class="alert alert-error">
+        <span>Failed to load health data</span>
+      </div>
+    </div>
   </div>
 </template>
 

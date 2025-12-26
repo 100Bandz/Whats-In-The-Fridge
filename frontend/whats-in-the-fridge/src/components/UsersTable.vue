@@ -1,50 +1,51 @@
 <template>
-  <div>
-    <h2 class="text-2xl font-semibold mb-4">User Management</h2>
-    <table class="w-full border border-gray-300">
-      <thead>
-        <tr class="bg-gray-100">
-          <th class="p-2 border">ID</th>
-          <th class="p-2 border">Email</th>
-          <th class="p-2 border">Role</th>
-          <th class="p-2 border">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="u in users" :key="u.id" class="text-center">
-          <td class="p-2 border">{{ u.id }}</td>
-          <td class="p-2 border">{{ u.email }}</td>
-          <td class="p-2 border">
-            <span v-if="u.isAdmin" class="text-green-600 font-bold">Admin</span>
-            <span v-else>User</span>
-          </td>
-          <td class="p-2 border">
-            <button
-              v-if="!u.isAdmin"
-              @click="makeAdmin(u.id)"
-              class="px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 mr-2"
-            >
-              Promote
-            </button>
-
-            <button
-              v-else
-              @click="demoteAdmin(u.id)"
-              class="px-2 py-1 bg-yellow-600 text-white rounded hover:bg-yellow-700 mr-2"
-            >
-              Demote
-            </button>
-
-            <button
-              @click="deleteUser(u.id)"
-              class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title mb-3">User Management</h2>
+      <div class="overflow-x-auto">
+        <table class="table table-zebra text-sm">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="u in users" :key="u.id">
+              <td>{{ u.id }}</td>
+              <td>{{ u.email }}</td>
+              <td>
+                <div v-if="u.isAdmin" class="badge badge-success">Admin</div>
+                <div v-else class="badge">User</div>
+              </td>
+              <td class="flex flex-wrap gap-2">
+                <button
+                  v-if="!u.isAdmin"
+                  @click="makeAdmin(u.id)"
+                  class="btn btn-xs btn-secondary"
+                >
+                  Promote
+                </button>
+                <button
+                  v-else
+                  @click="demoteAdmin(u.id)"
+                  class="btn btn-xs btn-warning"
+                >
+                  Demote
+                </button>
+                <button
+                  @click="deleteUser(u.id)"
+                  class="btn btn-xs btn-error">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 

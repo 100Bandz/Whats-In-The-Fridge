@@ -1,9 +1,21 @@
 <template>
-  <div>
-    <h2 class="text-xl font-semibold mb-4">API Routes</h2>
-    <ul class="list-disc pl-5">
-      <li v-for="route in routes" :key="route.path">{{ route.method }} - {{ route.path }}</li>
-    </ul>
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title mb-3">API Routes</h2>
+      <div class="overflow-x-auto">
+        <table class="table table-zebra text-sm">
+          <thead>
+            <tr><th>Method</th><th>Path</th></tr>
+          </thead>
+          <tbody>
+            <tr v-for="route in routes" :key="route.path">
+              <td><div class="badge badge-info">{{ route.method }}</div></td>
+              <td>{{ route.path }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 

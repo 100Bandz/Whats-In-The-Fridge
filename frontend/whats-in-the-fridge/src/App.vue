@@ -1,162 +1,164 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
+  <div class="flex flex-col items-center">
     <div class="w-full max-w-3xl">
       <!-- Title -->
-      <header class="flex justify-center items-center gap-3 mb-6">
-        <img src="/gradient.svg" class="h-8 w-auto" alt="Gradient logo" />
-        <h1 class="font-bold text-2xl">What's In The Fridge?</h1>
+      <header class="text-center mb-10">
+        <h1 class="text-4xl font-extrabold flex justify-center items-center gap-2 text-primary">
+          What's In The Fridge?
+        </h1>
+        <p class="text-base-content/70 mt-2">
+          Generate creative recipes with the ingredients you already have!
+        </p>
       </header>
 
-      <!-- Pantry Input -->
-      <div class="flex gap-2 mb-4">
-        <input
-          v-model="ingredientsInput"
-          @keyup.enter="addIngredients"
-          type="text"
-          placeholder="Type ingredient and press Enter (or use commas)"
-          class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-        <button
-          @click="addIngredients"
-          class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition disabled:opacity-50"
-          :disabled="!ingredientsInput.trim()"
-        >
-          Add
-        </button>
-      </div>
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <!-- Pantry Input -->
+          <div class="form-control">
+            <label class="label pb-2"><span class="label-text">Add Ingredients</span></label>
 
-      <!-- Pantry Chips -->
-      <div class="flex flex-wrap gap-2 mb-6">
-        <span
-          v-for="(ingredient, idx) in pantry"
-          :key="idx"
-          class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm flex items-center gap-2 hover:bg-green-200 transition"
-        >
-          {{ ingredient }}
-          <button
-            @click="removeIngredient(ingredient)"
-            class="text-red-500 hover:text-red-700 font-bold"
-            aria-label="Remove ingredient"
-          >
-            ×
-          </button>
-        </span>
-
-        <span v-if="!pantry.length" class="text-gray-400 italic">
-          Your pantry is empty. Add some ingredients 👆
-        </span>
-      </div>
-
-      <!-- Options -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <!-- Free text -->
-        <input
-          v-model="cuisine"
-          type="text"
-          class="p-2 border rounded"
-          placeholder="Cuisine (e.g. Italian)"
-        />
-
-        <!-- Meal Type Dropdown -->
-        <select v-model="mealType" class="p-2 border rounded">
-          <option value="">Any Meal</option>
-          <option value="Breakfast">Breakfast</option>
-          <option value="Lunch">Lunch</option>
-          <option value="Dinner">Dinner</option>
-          <option value="Snack">Snack</option>
-        </select>
-
-        <!-- Diet Type Dropdown -->
-        <select v-model="dietType" class="p-2 border rounded">
-          <option value="">Any Diet</option>
-          <option value="Vegetarian">Vegetarian</option>
-          <option value="Vegan">Vegan</option>
-          <option value="Gluten-Free">Gluten-Free</option>
-          <option value="Keto">Keto</option>
-        </select>
-
-        <!-- Difficulty Dropdown -->
-        <select v-model="difficulty" class="p-2 border rounded">
-          <option value="">Any Difficulty</option>
-          <option value="Easy">Easy</option>
-          <option value="Medium">Medium</option>
-          <option value="Hard">Hard</option>
-        </select>
-
-        <!-- Free text -->
-        <input
-          v-model="language"
-          type="text"
-          class="p-2 border rounded md:col-span-2"
-          placeholder="Language (English)"
-        />
-      </div>
-
-      <!-- Toggle: allow extras -->
-      <div class="flex items-center gap-3 mb-6">
-        <input
-          id="allowExtras"
-          type="checkbox"
-          v-model="allowExtras"
-          class="h-4 w-4 text-green-600 border-gray-300 rounded"
-        />
-        <label for="allowExtras" class="text-gray-700">
-          Allow extra common ingredients (creative mode)
-        </label>
-      </div>
-
-      <!-- Actions -->
-      <div class="flex justify-center mb-6">
-        <button
-          @click="getRecipes"
-          :disabled="!pantry.length || loading"
-          class="px-6 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition disabled:opacity-50 flex items-center gap-2"
-        >
-          <span v-if="loading" class="animate-spin">⏳</span>
-          {{ loading ? "Finding Recipes..." : "Suggest Recipes" }}
-        </button>
-      </div>
-
-      <!-- Recipes -->
-      <div v-if="recipes.length" class="grid gap-6 md:grid-cols-2">
-        <div
-          v-for="(recipe, index) in recipes"
-          :key="index"
-          class="bg-white p-6 rounded-xl shadow hover:shadow-lg hover:scale-[1.02] transition flex flex-col justify-between"
-        >
-          <div>
-            <h2 class="text-xl font-semibold mb-3">{{ recipe.name }}</h2>
-
-            <!-- optional fields -->
-            <div
-              v-if="recipe.cuisine || recipe.dietType || recipe.difficulty"
-              class="text-sm text-gray-500 mb-2"
-            >
-              <span v-if="recipe.cuisine">Cuisine: {{ recipe.cuisine }}</span>
-              <span v-if="recipe.dietType" class="ml-3">Diet: {{ recipe.dietType }}</span>
-              <span v-if="recipe.difficulty" class="ml-3"
-                >Difficulty: {{ recipe.difficulty }}</span
+            <div class="flex items-stretch">
+              <input
+                v-model="ingredientsInput"
+                @keyup.enter="addIngredients"
+                type="text"
+                placeholder="Type ingredient and press Enter (or commas)"
+                class="input input-bordered border-r-0 rounded-r-none w-full focus:outline-none focus:ring-0"
+              />
+              <button
+                @click="addIngredients"
+                class="btn btn-primary rounded-l-none border border-base-300"
               >
+                Add
+              </button>
             </div>
-
-            <ul class="list-disc pl-5 space-y-1 text-gray-700">
-              <li v-for="(step, i) in recipe.steps" :key="i">{{ step }}</li>
-            </ul>
           </div>
 
-          <!-- Save button -->
-          <button
-            @click="saveRecipe(recipe)"
-            class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600 transition"
+          <!-- Pantry Chips -->
+          <div v-if="pantry" class="flex flex-wrap gap-2 mt-4">
+            <span
+              v-for="(ingredient, idx) in pantry"
+              :key="idx"
+              class="badge badge-outline text-base-content gap-2 hover:scale-105 transition"
+            >
+              {{ ingredient }}
+              <button
+                class="btn btn-xs btn-circle btn-ghost"
+                @click="removeIngredient(ingredient)"
+                aria-label="Remove"
+              >
+                ✕
+              </button>
+            </span>
+
+            <p v-if="!pantry.length" class="italic text-base-content/60">
+              Your pantry is empty — add some ingredients
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <input
+              v-model="cuisine"
+              type="text"
+              placeholder="Cuisine (e.g. Italian)"
+              class="input input-bordered w-full"
+            />
+            <select v-model="mealType" class="select select-bordered w-full">
+              <option value="">Any Meal</option>
+              <option>Breakfast</option>
+              <option>Lunch</option>
+              <option>Dinner</option>
+              <option>Snack</option>
+            </select>
+            <select v-model="dietType" class="select select-bordered w-full">
+              <option value="">Any Diet</option>
+              <option>Vegetarian</option>
+              <option>Vegan</option>
+              <option>Gluten-Free</option>
+              <option>Keto</option>
+            </select>
+            <select v-model="difficulty" class="select select-bordered w-full">
+              <option value="">Any Difficulty</option>
+              <option>Easy</option>
+              <option>Medium</option>
+              <option>Hard</option>
+            </select>
+            <input
+              v-model="language"
+              type="text"
+              placeholder="Language (English)"
+              class="input input-bordered md:col-span-2"
+            />
+          </div>
+
+          <!-- Toggle: allow extras -->
+          <label
+            class="label cursor-pointer mt-4 justify-start items-start gap-3 flex-wrap whitespace-normal break-words text-sm sm:text-base"
           >
-            Save Recipe
-          </button>
+            <input
+              type="checkbox"
+              class="toggle toggle-success flex-shrink-0 mt-1"
+              v-model="allowExtras"
+            />
+            <span class="label-text text-base-content leading-snug">
+              Allow extra common ingredients (creative mode)
+            </span>
+          </label>
+
+          <div class="card-actions justify-center mt-4">
+            <button @click="getRecipes" :disabled="loading || !pantry?.length" class="btn btn-success">
+              <span v-if="loading" class="loading loading-spinner loading-sm"></span>
+              {{ loading ? "Finding Recipes..." : "Suggest Recipes" }}
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Empty state -->
-      <div v-else-if="!loading" class="text-center text-gray-500 mt-6">
-        No recipes yet. Add ingredients and click <strong>Suggest Recipes</strong>
+      <!-- Recipes -->
+      <div v-if="recipes.length" class="grid gap-6 md:grid-cols-2 mt-8">
+        <div
+          v-for="(recipe, index) in recipes"
+          :key="index"
+          class="card bg-base-100 shadow-lg hover:shadow-xl hover:scale-[1.02] transition"
+        >
+          <div class="card-body">
+            <h2 class="card-title text-primary">{{ recipe.name }}</h2>
+
+            <div
+              v-if="recipe.cuisine || recipe.dietType || recipe.difficulty"
+              class="text-sm text-base-content/70 mb-2 flex flex-wrap gap-2"
+            >
+              <span v-if="recipe.cuisine" class="badge badge-outline">Cuisine: {{ recipe.cuisine }}</span>
+              <span v-if="recipe.dietType" class="badge badge-outline">Diet: {{ recipe.dietType }}</span>
+              <span v-if="recipe.difficulty" class="badge badge-outline">Difficulty: {{ recipe.difficulty }}</span>
+            </div>
+
+            <ul class="list-disc pl-5 space-y-1 text-base-content/80">
+              <li v-for="(step, i) in recipe.steps" :key="i">{{ step }}</li>
+            </ul>
+
+            <div class="card-actions justify-start mt-auto pt-4">
+              <button
+                @click="saveRecipe(recipe)"
+                :disabled="isSaveDisabled(recipe)"
+                class="btn btn-warning"
+              >
+                <span v-if="user && !loadedSaved" class="loading loading-spinner loading-sm mr-2"></span>
+                {{ saveLabel(recipe) }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="!loading">
+        <div v-if="!pantry?.length" class="alert alert-info text-center mt-8">
+          <span>Your pantry is empty. Add ingredients to get started</span>
+        </div>
+        <div v-else class="alert alert-info text-center mt-8">
+          <span>No recipes yet! Click Suggest Recipes to see results</span>
+        </div>
       </div>
     </div>
   </div>
@@ -167,7 +169,7 @@ import { ref, onMounted, inject } from "vue";
 import { apiFetch } from "@/utils/api";
 import { useAuth } from "@/composables/useAuth";
 
-const { pantry, recipes, user } = useAuth(); // Shared state
+const { pantry, recipes, user, savedRecipeNames, loadedSaved, fetchSavedRecipes, fetchPantry } = useAuth()
 
 const toast = inject('toast') as any
 
@@ -195,17 +197,16 @@ interface Recipe {
 
 onMounted(async () => {
   try {
-    if (!user.value) return
-    const data = await apiFetch<{ ingredients: string[] }>("/api/pantry", {
-      method: "GET",
-    });
-    pantry.value = data.ingredients || [];
+    if (user.value) {
+      await fetchSavedRecipes();
+      await fetchPantry();
+    }
   } catch (err) {
-    console.error("Failed to fetch pantry", err);
+    console.error("Startup fetch error:", err);
   }
 });
 
-const addIngredients = async () => {
+async function addIngredients() {
   if (!user.value) {
     toast?.value?.showToast("You must be logged in to add ingredients.", "error")
     return
@@ -218,28 +219,20 @@ const addIngredients = async () => {
 
   if (!newIngredients.length) return
 
-  // Filter out ingredients already in pantry
-  const existingIngredients = pantry.value.map((i) => i.toLowerCase())
-  const uniqueNewIngredients = newIngredients.filter(
-    (i) => !existingIngredients.includes(i)
-  )
-
-  if (!uniqueNewIngredients.length) {
-    // Show toast for duplicate ingredients
-    toast?.value?.showToast("Cannot add duplicate ingredients", "error")
+  const existing = pantry.value?.map((i) => i.toLowerCase()) || []
+  const unique = newIngredients.filter((i) => !existing.includes(i))
+  if (!unique.length) {
+    toast?.value?.showToast("Duplicate ingredients not allowed.", "error")
+    ingredientsInput.value = ""
     return
   }
 
   try {
     const data = await apiFetch<{ ingredients: string[] }>("/api/pantry", {
       method: "POST",
-      body: JSON.stringify({ ingredients: uniqueNewIngredients }),
+      body: JSON.stringify({ ingredients: unique }),
     })
-
-    // Update pantry on success
-    pantry.value = data.ingredients || pantry.value
-    toast?.value?.showToast("Ingredients added successfully!", "success")
-    // Clear input field
+    pantry.value = data.ingredients || pantry.value || []
     ingredientsInput.value = ""
   } catch (err) {
     console.error("Failed to add ingredients", err)
@@ -247,27 +240,24 @@ const addIngredients = async () => {
   }
 }
 
-
-const removeIngredient = async (ingredient: string) => {
+async function removeIngredient(ingredient: string) {
   try {
-    const data = await apiFetch<{ ingredients: string[] }>(
-      `/api/pantry/${encodeURIComponent(ingredient)}`,
-      {
-        method: "DELETE",
-      }
-    );
-    pantry.value = data.ingredients || pantry.value;
+    const data = await apiFetch<{ ingredients: string[] }>(`/api/pantry/${encodeURIComponent(ingredient)}`, {
+      method: "DELETE",
+    })
+    pantry.value = data.ingredients || pantry.value || []
   } catch (err) {
-    console.error("Failed to remove ingredient", err);
+    console.error("Failed to remove ingredient", err)
+    toast?.value?.showToast("Failed to remove ingredient.", "error")
   }
-};
+}
 
-const getRecipes = async () => {
-  recipes.value = [];
-  loading.value = true;
+async function getRecipes() {
+  recipes.value = []
+  loading.value = true
 
   try {
-    const endpoint = allowExtras.value ? "/api/recipes/suggest" : "/api/recipes/generate";
+    const endpoint = allowExtras.value ? "/api/recipes/suggest" : "/api/recipes/generate"
     const payload = {
       ingredients: pantry.value,
       cuisine: cuisine.value,
@@ -275,29 +265,55 @@ const getRecipes = async () => {
       dietType: dietType.value,
       difficulty: difficulty.value,
       language: language.value || "English",
-    };
+    }
     const data = await apiFetch<{ recipes: Recipe[] }>(endpoint, {
       method: "POST",
       body: JSON.stringify(payload),
-    });
-    recipes.value = data.recipes || [];
+    })
+    recipes.value = data.recipes || []
   } catch (err) {
-    console.error("Failed to fetch recipes", err);
+    console.error("Failed to fetch recipes", err)
+    toast?.value?.showToast("Failed to fetch recipes.", "error")
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
-const saveRecipe = async (recipe: Recipe) => {
+function isSaveDisabled(recipe: Recipe) {
+  if (!user.value) return true
+  if (!loadedSaved.value) return true
+  return savedRecipeNames.value.has(recipe.name)
+}
+
+function saveLabel(recipe: Recipe) {
+  if (!user.value) return "Login to save"
+  if (!loadedSaved.value) return "Loading..."
+  return savedRecipeNames.value.has(recipe.name) ? "Saved ✓" : "Save Recipe"
+}
+
+async function saveRecipe(recipe: Recipe) {
+  if (!user.value) {
+    toast?.value?.showToast("You must be logged in to save recipes.", "error")
+    return
+  }
+  if (savedRecipeNames.value.has(recipe.name)) return
+
   try {
     await apiFetch("/api/recipes", {
       method: "POST",
       body: JSON.stringify(recipe),
-    });
-    alert("Recipe saved");
-  } catch (err) {
-    console.error("Failed to save recipe", err);
-    alert("Save failed. Check console.");
+    })
+    savedRecipeNames.value.add(recipe.name)
+    toast?.value?.showToast("Recipe saved!", "success")
+  } catch (err: any) {
+    const msg = err?.message || ""
+    if (msg.includes("Recipe already saved") || msg.toLowerCase().includes("already")) {
+      savedRecipeNames.value.add(recipe.name)
+      toast?.value?.showToast("This recipe is already saved.", "info")
+    } else {
+      console.error("Save recipe error:", err)
+      toast?.value?.showToast("Save failed.", "error")
+    }
   }
-};
+}
 </script>
