@@ -11,13 +11,19 @@ router.post("/", requireAuth, (req, res) => {
     return res.status(400).json({ error: "Missing fields" })
   }
 
-  const stmt = db.prepare(`
-    INSERT INTO recipes (user_id, name, steps)
-    VALUES (?, ?, ?)
-  `)
-  stmt.run(req.user.id, name, JSON.stringify(steps))
-
-  res.json({ success: true })
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO recipes (user_id, name, steps)
+      VALUES (?, ?, ?)
+    `)
+    stmt.run(req.user.id, name.trim(), JSON.stringify(steps))
+    res.json({ success: true })
+  } catch (err) {
+    if (err.code === "SQLITE_CONSTRAINT_UNIQUE") {
+      return res.status(400).json({ error: "Recipe already saved" })
+    }
+    res.status(500).json({ error: "Failed to save recipe" })
+  }
 })
 
 // Get saved recipes

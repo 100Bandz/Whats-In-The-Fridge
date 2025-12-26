@@ -37,7 +37,8 @@ db.prepare(`
     name TEXT NOT NULL,
     steps TEXT NOT NULL,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(user_id, name)
   )
 `).run();
 
