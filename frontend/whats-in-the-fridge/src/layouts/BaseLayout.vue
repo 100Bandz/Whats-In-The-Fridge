@@ -130,7 +130,7 @@ provide('toast', toastRef)
 
 const themes = [
   'light', 'dark', 'lemonade', 'lofi', 'dim', 'nord', 'corporate',
-  'coffee', 'carmellatte', 'forest', 'valentine', 'autumn', 'winter'
+  'coffee', 'caramellatte', 'forest', 'valentine', 'autumn', 'winter'
 ]
 
 const currentTheme = ref(localStorage.getItem('theme') || 'dim')
