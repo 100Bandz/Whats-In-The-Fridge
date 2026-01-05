@@ -6,7 +6,7 @@
         <table class="table w-full text-sm">
           <tbody>
             <tr><th>Status</th><td><span class="badge badge-success">{{ health.status }}</span></td></tr>
-            <tr><th>Uptime (s)</th><td>{{ health.uptime.toFixed(2) }}</td></tr>
+            <tr><th>Uptime (s)</th><td>{{ (health.uptime ?? 0).toFixed(2) }}</td></tr>
             <tr><th>Timestamp</th><td>{{ health.timestamp }}</td></tr>
           </tbody>
         </table>
